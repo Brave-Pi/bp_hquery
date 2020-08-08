@@ -27,8 +27,8 @@ class Engine {
 		"=" => "eq"
 	];
 
-	static inline function _default():Dynamic
-		throw "invalid expression";
+	static inline function _default(?e):Dynamic
+		throw "invalid expression " + Std.string(e);
 
 	static inline function findOp(op)
 		return if (opMap.exists(op)) {
@@ -39,7 +39,6 @@ class Engine {
 
 	public function parse(s:String) {
 		var parsed = parser.parseString(s);
-		trace(parsed);
 		return convert(parsed);
 	}
 
@@ -50,12 +49,9 @@ class Engine {
 				ret['$' + findOp(op)] = [e1, e2].map(reify);
 				ret;
 			case ECall(e, params):
-				var ret = new haxe.DynamicAccess();
-				var args = params.map(reify);
-				var exprRet:{key:String, value:Dynamic} = Reflect.callMethod(StaticFilterFunctions, e.reify, args);
-				ret.set(exprRet.key, exprRet.value);
-				ret;
-			default: _default();
+				expr.reify();
+			case EParent(e): e.convert();
+			default: _default(expr);
 		}
 
 	static inline function parseAccess(e:Expr)
@@ -90,8 +86,11 @@ class Engine {
 				Reflect.callMethod(FilterFunctions, Reflect.getProperty(FilterFunctions, method), args);
 			case EBinop(_, _, _):
 				convert(e);
+			case EUnop(_, _, EConst(_)):
+				interp.execute(e);
 			case EIdent(v): '$' + v;
-			default: _default();
+			case EParent(e): e.reify();
+			default: _default(e);
 		}
 }
 
@@ -101,6 +100,13 @@ typedef ArgList = Array<Dynamic>;
 class FilterFunctions {
 	public static function date(?year = 0, ?month = 0, ?day = 0, ?hour = 0, ?min = 0, ?sec = 0)
 		return new Date(year, month, day, hour, min, sec);
+
+	public static function isIn(field:String, exprs:Array<Dynamic>) {
+		var ret = new haxe.DynamicAccess();
+		var args:ArgList = [field];
+		ret["$in"] = args.concat(exprs);
+		return ret;
+	}
 
 	public static function substring(field:String, ?start:Int, ?count:Int):Dynamic {
 		var ret = new haxe.DynamicAccess();

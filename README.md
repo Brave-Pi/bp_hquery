@@ -11,3 +11,72 @@ Without further changes the structure is following:
 # BP HQuery
 
 Convert Hscript expressions to MongoDB queries (using [aggregation pipeline operators](https://docs.mongodb.com/manual/reference/operator/aggregation/)).
+
+```haxe
+foo == bar
+```
+becomes:
+```json
+{
+   "$eq": [
+      "$foo",
+      "$bar"
+   ]
+}
+```
+```haxe
+val.isIn([1,2,3])
+```
+becomes:
+```json
+{
+   "$in": [
+      "$val",
+      1,
+      2,
+      3
+   ]
+}
+```
+```haxe
+(x < 10 && y > 10) || (x > -10 && y < -10)
+```
+becomes:
+```json
+{
+   "$or": [
+      {
+         "$and": [
+            {
+               "$lt": [
+                  "$x",
+                  10
+               ]
+            },
+            {
+               "$gt": [
+                  "$y",
+                  10
+               ]
+            }
+         ]
+      },
+      {
+         "$and": [
+            {
+               "$gt": [
+                  "$x",
+                  -10
+               ]
+            },
+            {
+               "$lt": [
+                  "$y",
+                  -10
+               ]
+            }
+         ]
+      }
+   ]
+}
+```
