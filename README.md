@@ -10,7 +10,7 @@ Without further changes the structure is following:
 
 # BP HQuery
 
-Convert Hscript expressions to MongoDB queries (using [aggregation pipeline operators](https://docs.mongodb.com/manual/reference/operator/aggregation/)).
+Convert Hscript expressions into MongoDB queries (using [aggregation pipeline operators](https://docs.mongodb.com/manual/reference/operator/aggregation/)).
 
 ```haxe
 foo == bar
