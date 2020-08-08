@@ -8,6 +8,7 @@ using bp.hquery.Engine;
 class Engine {
 	public function new() {}
 
+	var interp = new Interp();
 	var parser = {
 		var p = new hscript.Parser();
 		p.opRightAssoc.remove('=');
@@ -39,10 +40,8 @@ class Engine {
 
 	public function parse(s:String) {
 		var parsed = parser.parseString(s);
-		return convert(parsed);
+		return convert(parsed, interp);
 	}
-
-	
 
 	static inline function parseAccess(e:Expr)
 		return (function doParse(prev:Array<String>, e)
@@ -57,16 +56,15 @@ class Engine {
 					throw e;
 			})([], e);
 
-	static var interp = new Interp();
-
-	static function convert(e:Expr):Dynamic
+	static function convert(e:Expr, interp:Interp):Dynamic {
+        var convert = convert.bind(_, interp);
 		return switch e {
-            case EBinop(op, e1, e2):
+			case EBinop(op, e1, e2):
 				var ret = new haxe.DynamicAccess();
 				ret['$' + findOp(op)] = [e1, e2].map(convert);
 				ret;
 			case EField(e, f):
-				['${e.convert}', f].join('.');
+				['${convert(e)}', f].join('.');
 			case EConst(_):
 				interp.execute(e);
 			case EArrayDecl(e):
@@ -83,9 +81,10 @@ class Engine {
 			case EUnop(_, _, EConst(_)):
 				interp.execute(e);
 			case EIdent(v): '$' + v;
-            case EParent(e): e.convert();
+			case EParent(e): convert(e);
 			default: _default(e);
 		}
+	}
 }
 
 class StaticFilterFunctions {}
