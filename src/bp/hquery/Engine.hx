@@ -103,8 +103,8 @@ class FilterFunctions {
 
 	public static function isIn(field:String, exprs:Array<Dynamic>) {
 		var ret = new haxe.DynamicAccess();
-		var args:ArgList = [field];
-		ret["$in"] = args.concat(exprs);
+		var args:ArgList = [field, exprs];
+		ret["$in"] = args;
 		return ret;
 	}
 
