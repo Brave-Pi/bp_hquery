@@ -90,7 +90,7 @@ class Engine {
 				Reflect.callMethod(FilterFunctions, Reflect.getProperty(FilterFunctions, method), args);
 			case EBinop(_, _, _):
 				convert(e);
-			case EIdent(v): v;
+			case EIdent(v): '$' + v;
 			default: _default();
 		}
 }
