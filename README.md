@@ -24,6 +24,21 @@ becomes:
    ]
 }
 ```
+
+```haxe
+foo == "baz"
+```
+becomes:
+```json
+{
+   "$eq": [
+      "$foo",
+      "baz"
+   ]
+}
+```
+
+
 ```haxe
 val.isIn([1,2,3])
 ```
