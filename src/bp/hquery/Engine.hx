@@ -42,17 +42,7 @@ class Engine {
 		return convert(parsed);
 	}
 
-	static function convert(expr:Expr)
-		return switch expr {
-			case EBinop(op, e1, e2):
-				var ret = new haxe.DynamicAccess();
-				ret['$' + findOp(op)] = [e1, e2].map(reify);
-				ret;
-			case ECall(e, params):
-				expr.reify();
-			case EParent(e): e.convert();
-			default: _default(expr);
-		}
+	
 
 	static inline function parseAccess(e:Expr)
 		return (function doParse(prev:Array<String>, e)
@@ -69,16 +59,20 @@ class Engine {
 
 	static var interp = new Interp();
 
-	static function reify(e:Expr):Dynamic
+	static function convert(e:Expr):Dynamic
 		return switch e {
+            case EBinop(op, e1, e2):
+				var ret = new haxe.DynamicAccess();
+				ret['$' + findOp(op)] = [e1, e2].map(convert);
+				ret;
 			case EField(e, f):
-				['${e.reify}', f].join('.');
+				['${e.convert}', f].join('.');
 			case EConst(_):
 				interp.execute(e);
 			case EArrayDecl(e):
-				e.map(reify);
+				e.map(convert);
 			case ECall(e, params):
-				var args = params.map(reify);
+				var args = params.map(convert);
 				var access = e.parseAccess();
 				var method = access.pop();
 				if (access.length > 0)
@@ -89,7 +83,7 @@ class Engine {
 			case EUnop(_, _, EConst(_)):
 				interp.execute(e);
 			case EIdent(v): '$' + v;
-			case EParent(e): e.reify();
+            case EParent(e): e.convert();
 			default: _default(e);
 		}
 }
