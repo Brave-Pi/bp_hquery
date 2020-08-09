@@ -57,7 +57,7 @@ class Engine {
 			})([], e);
 
 	static function convert(e:Expr, interp:Interp):Dynamic {
-        var convert = convert.bind(_, interp);
+		var convert = convert.bind(_, interp);
 		return switch e {
 			case EBinop(op, e1, e2):
 				var ret = new haxe.DynamicAccess();
@@ -76,11 +76,9 @@ class Engine {
 				if (access.length > 0)
 					args.unshift('$' + access.join('.'));
 				Reflect.callMethod(FilterFunctions, Reflect.getProperty(FilterFunctions, method), args);
-			case EBinop(_, _, _):
-				convert(e);
 			case EUnop(_, _, EConst(_)):
 				interp.execute(e);
-			case EIdent(v): '$' + v;
+			case EIdent(v): if (v != 'null') '$' + v else null;
 			case EParent(e): convert(e);
 			default: _default(e);
 		}
