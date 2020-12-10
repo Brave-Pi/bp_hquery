@@ -89,6 +89,9 @@ class StaticFilterFunctions {}
 typedef ArgList = Array<Dynamic>;
 
 class FilterFunctions {
+	public static function now()
+		return Date.now();
+	
 	public static function date(?year = 0, ?month = 0, ?day = 0, ?hour = 0, ?min = 0, ?sec = 0)
 		return new Date(year, month, day, hour, min, sec);
 
