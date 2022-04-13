@@ -3,10 +3,21 @@ package bp.hquery;
 import hscript.Expr;
 import hscript.Interp;
 
-using bp.hquery.Engine;
+using bp.hquery.MongoEngine;
+@:expose
+class MongoEngine {
+	var logger:Logger;
 
-class Engine {
-	public function new() {}
+	public function new(?logger) {
+		if (logger != null)
+			this.logger = logger;
+		else
+			this.logger = {
+				info: haxe.Log.trace,
+				warn: haxe.Log.trace,
+				error: haxe.Log.trace
+			}
+	}
 
 	var interp = new Interp();
 	var parser = {
@@ -35,13 +46,17 @@ class Engine {
 		return if (opMap.exists(op)) {
 			opMap[op];
 		} else {
-			'$' + op;
+			throw 'Invalid operator';
 		}
 
-	public function parse(s:String) {
-		var parsed = parser.parseString(s);
-		return convert(parsed, interp);
-	}
+	public function parse(s:String)
+		try {
+			var parsed = parser.parseString(s);
+			return {ok: true, result: convert(parsed, interp), error: null};
+		} catch (e:haxe.Exception) {
+			logger.error(e, "Error parsing query string");
+			return {ok: false, result: null, error: '$e'};
+		}
 
 	static inline function parseAccess(e:Expr)
 		return (function doParse(prev:Array<String>, e)
@@ -91,7 +106,7 @@ typedef ArgList = Array<Dynamic>;
 class FilterFunctions {
 	public static function now()
 		return Date.now();
-	
+
 	public static function date(?year = 0, ?month = 0, ?day = 0, ?hour = 0, ?min = 0, ?sec = 0)
 		return new Date(year, month, day, hour, min, sec);
 

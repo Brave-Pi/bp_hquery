@@ -1,0 +1,7 @@
+-cp src
+-D analyzer-optimize
+--library hscript
+--library hxnodejs
+bp.hquery.SequelizeEngine
+--js bin/js/sequelize-engine.js
+-D js-es=6

@@ -1,1 +1,4 @@
 node_modules/**
+.haxelib/**
+bin/**
+package-lock.json

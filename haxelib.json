@@ -15,6 +15,7 @@
     "version": "0.0.0",
     "url": "https://github.com/brave-pi/bp_hquery/",
     "dependencies": {
-        "hscript": ""
+        "hscript": "",
+        "hxnodejs": ""
     }
 }

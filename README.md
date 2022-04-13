@@ -12,6 +12,43 @@ Without further changes the structure is following:
 
 Convert Hscript expressions into MongoDB queries (using [aggregation pipeline operators](https://docs.mongodb.com/manual/reference/operator/aggregation/)).
 
+Also supports the JS `sequelize` library.
+
+## Usage
+
+### Mongo Engine
+Run:
+`haxe build mongo.hxml`
+
+Then:
+```js
+const {MongoEngine} = require('./bin/js/mongo-engine').bp.hquery;
+const engine = new MongoEngine();
+const parsed = engine.parse("x == 5 && y <= 10");
+if(parsed.ok) {
+   console.log(parsed.result);
+} else {
+   console.error(parsed.error);
+}
+```
+
+### Sequelize Engine
+Run:
+`haxe build sequelize.hxml`
+
+Then:
+```js
+const {SequelizeEngine} = require('./bin/js/sequelize-engine').bp.hquery;
+const engine = new SequelizeEngine();
+const parsed = engine.parse("foo.like('%bar%') && baz.notLike('%qux%')");
+if(parsed.ok) {
+   console.log(parsed.result);
+} else {
+   console.error(parsed.error);
+}
+```
+
+## Examples
 ```haxe
 foo == bar
 ```
