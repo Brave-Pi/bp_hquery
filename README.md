@@ -38,8 +38,9 @@ Run:
 
 Then:
 ```js
+const sequelize = /* get a sequelize instance */
 const {SequelizeEngine} = require('./bin/js/sequelize-engine').bp.hquery;
-const engine = new SequelizeEngine();
+const engine = new SequelizeEngine(sequelize);
 const parsed = engine.parse("foo.like('%bar%') && baz.notLike('%qux%')");
 if(parsed.ok) {
    console.log(parsed.result);
