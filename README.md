@@ -18,7 +18,7 @@ Also supports the JS `sequelize` library.
 
 ### Mongo Engine
 Run:
-`haxe build mongo.hxml`
+`haxe mongo.hxml`
 
 Then:
 ```js
@@ -34,7 +34,7 @@ if(parsed.ok) {
 
 ### Sequelize Engine
 Run:
-`haxe build sequelize.hxml`
+`haxe sequelize.hxml`
 
 Then:
 ```js
